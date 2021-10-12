@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Icon } from 'react-native-vector-icons/Icon';
+
 
 const App = () => {
   return (
