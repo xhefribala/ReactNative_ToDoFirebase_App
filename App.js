@@ -13,16 +13,16 @@ const App = () => {
 
   ]);
 
-  const ListItem = ({ taskToDo }) => {
+  const ListItem = ({ tasks }) => {
     return (
       //this view will hold the task list
       <View style={styles.listItem}>
         <View>
           <Text style={{
             fontWeight: '700', fontSize: 20, color: colours.white,
-            textDecorationLine: taskToDo?.completed ? 'line-through' : 'none'
+            textDecorationLine: tasks?.completed ? 'line-through' : 'none'
           }}>
-            {taskToDo?.task}
+            {tasks?.task}
           </Text>
         </View>
         <TouchableOpacity><MaterialIcons name="done-outline" size={24} color="white" /></TouchableOpacity>
