@@ -7,6 +7,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 const App = () => {
+  //hold text input, by default it will be an empty string
+  const [textInput, setTextInput] = React.useState('');
   const [tasks, setTasks] = React.useState([
     { id: 1, task: 'First task', completed: true },
     { id: 2, task: 'Second task', completed: false },
@@ -25,12 +27,30 @@ const App = () => {
             {tasks?.task}
           </Text>
         </View>
+        {
+          //check if the task is not completed
+          !tasks?.completed && <TouchableOpacity>
+            <MaterialCommunityIcons name="delete-circle" size={24} color="red" />
+          </TouchableOpacity>
+        }
         <TouchableOpacity><MaterialIcons name="done-outline" size={24} color="white" /></TouchableOpacity>
-        <TouchableOpacity><MaterialCommunityIcons name="delete-circle" size={24} color="red" /></TouchableOpacity>
       </View>
 
     );
   };
+
+  //add task
+  const addTask = () => {
+    console.log(textInput);
+    const newTask = {
+      //generate a random ID for the newTask
+      id: Math.random(),
+      task: textInput,
+      completed: false,
+    };
+    setTasks([...tasks, addTask]);
+  }
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: colours.white }}>
@@ -47,8 +67,12 @@ const App = () => {
       </FlatList>
       <View style={styles.footer}>
         <View style={styles.inputTab}>
-          <TextInput placeholder="Add Task"></TextInput></View>
-        <TouchableOpacity>
+          <TextInput placeholder="Add Task"
+            value={textInput}
+            onChangeText={text => setTextInput(text)}>
+          </TextInput>
+        </View>
+        <TouchableOpacity onPress={addTask}>
           <Ionicons name="md-add-circle" size={50} color="#2596be" />
         </TouchableOpacity>
       </View>
