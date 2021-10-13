@@ -13,6 +13,8 @@ const App = () => {
 
   const ListItem = () => {
     return <View style={styles.listItem}></View>;
+    //this view will hold the task list 
+    <View><Text style={{ fontWeight: '700', fontSize: 20, color: colours.textColour, textDecorationLine: tasks?.completed ? "line-through" : "" }}>{tasks?.task}</Text></View>
   };
   return (
     <SafeAreaView
