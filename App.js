@@ -1,20 +1,35 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 
 const App = () => {
   const [tasks, setTasks] = React.useState([
     { id: 1, task: 'First task', completed: true },
-    { id: 2, task: 'Second task', completed: true },
+    { id: 2, task: 'Second task', completed: false },
 
   ]);
 
-  const ListItem = () => {
-    return <View style={styles.listItem}></View>;
-    //this view will hold the task list 
-    <View><Text style={{ fontWeight: '700', fontSize: 20, color: colours.textColour, textDecorationLine: tasks?.completed ? "line-through" : "" }}>{tasks?.task}</Text></View>
+  const ListItem = ({ taskToDo }) => {
+    return (
+      //this view will hold the task list
+      <View style={styles.listItem}>
+        <View>
+          <Text style={{
+            fontWeight: '700', fontSize: 20, color: colours.white,
+            textDecorationLine: taskToDo?.completed ? 'line-through' : 'none'
+          }}>
+            {taskToDo?.task}
+          </Text>
+        </View>
+        <TouchableOpacity><MaterialIcons name="done-outline" size={24} color="white" /></TouchableOpacity>
+        <TouchableOpacity><MaterialCommunityIcons name="delete-circle" size={24} color="red" /></TouchableOpacity>
+      </View>
+
+    );
   };
   return (
     <SafeAreaView
@@ -71,7 +86,7 @@ const styles = StyleSheet.create({
   },
   listItem: {
     padding: 20,
-    backgroundColor: colours.white,
+    backgroundColor: colours.textColour,
     flexDirection: 'row',
     elevation: 12,
     borderRadius: 7,
