@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -7,7 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 const App = () => {
-  //hold text input, by default it will be an empty string
+  //hold text input, by default it will be an empty string by default
   const [textInput, setTextInput] = React.useState('');
   const [tasks, setTasks] = React.useState([
     { id: 1, task: 'First task', completed: true },
@@ -19,7 +19,7 @@ const App = () => {
     return (
       //this view will hold the task list
       <View style={styles.listItem}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={{
             fontWeight: '700', fontSize: 20, color: colours.white,
             textDecorationLine: tasks?.completed ? 'line-through' : 'none'
@@ -29,11 +29,15 @@ const App = () => {
         </View>
         {
           //check if the task is not completed
-          !tasks?.completed && <TouchableOpacity>
-            <MaterialCommunityIcons name="delete-circle" size={24} color="red" />
+          //<MaterialCommunityIcons name="delete-circle" size={24} color="red" />
+          !tasks?.completed &&
+          <TouchableOpacity onPress={() => taskCompleted(tasks?.id)}>
+            <MaterialIcons name="done-outline" size={24} color="white" />
           </TouchableOpacity>
         }
-        <TouchableOpacity><MaterialIcons name="done-outline" size={24} color="white" /></TouchableOpacity>
+        <TouchableOpacity onPress={() => deleteTask(tasks?.id)}>
+          <MaterialCommunityIcons name="delete-circle" size={24} color="red" />
+        </TouchableOpacity>
       </View>
 
     );
@@ -41,22 +45,64 @@ const App = () => {
 
   //add task
   const addTask = () => {
-    console.log(textInput);
-    const newTask = {
-      //generate a random ID for the newTask
-      id: Math.random(),
-      task: textInput,
-      completed: false,
-    };
-    setTasks([...tasks, addTask]);
+    //if textInput is empty throw an error
+    if (textInput == "") {
+      Alert.alert("Attention", "Please input your task")
+    } else {
+      const newTask = {
+        //generate a random unique ID for the newTask
+        id: Math.random(),
+        task: textInput,
+        completed: false,
+      };
+      //array that hold the tasks
+      setTasks([...tasks, newTask]);
+      setTextInput('');
+    }
   }
+
+  // mark task as 'completed'
+  const taskCompleted = (taskID) => {
+    const newTaskItem = tasks.map((item) => {
+
+      if (item.id == taskID) {
+        //if true create new object and set completed to true
+        return { ...item, completed: true }
+      }
+      //return rest of items
+      return item;
+    });
+    //pass the new tasks completed
+    setTasks(newTaskItem);
+  };
+
+  // delete task from list
+  const deleteTask = (taskID) => {
+    const newTask = tasks.filter(item => item.id != taskID);
+    setTasks(newTask);
+  }
+
+  // delete all tasks
+  const deleteAllTasks = () => {
+    Alert.alert("Confirm", "Delete all tasks ?", [{
+      text: "Yes", onPress: () => setTasks([])
+    },
+    {
+      text: "No, I was joking! :)"
+    },
+    ]);
+  };
+
+
 
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: colours.white }}>
       <View style={styles.header}>
         <Text style={{ fontWeight: '700', fontSize: 25, color: colours.textColour }}>Xhefri's To Do List</Text>
-        <Ionicons name="trash-bin" size={24} color="#2596be" />
+        <TouchableOpacity onPress={deleteAllTasks}>
+          <Ionicons name="trash-bin" size={30} color="#2596be" />
+        </TouchableOpacity>
       </View>
       <FlatList
         showsVerticalScrollIndicator={false}
@@ -97,7 +143,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
+    flex: 1,
   },
   inputTab: {
     paddingVertical: 15,
@@ -107,6 +154,7 @@ const styles = StyleSheet.create({
     borderColor: colours.textColour,
     borderWidth: 1,
     width: 250,
+    flex: 1,
   },
   listItem: {
     padding: 20,
