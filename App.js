@@ -1,5 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,11 +10,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const App = () => {
   //hold text input, by default it will be an empty string by default
   const [textInput, setTextInput] = React.useState('');
-  const [tasks, setTasks] = React.useState([
-    { id: 1, task: 'First task', completed: true },
-    { id: 2, task: 'Second task', completed: false },
+  const [tasks, setTasks] = React.useState([]);
+  React.useEffect(() => { getTasksPhone(); }, []);
+  React.useEffect(() => { storeTasksPhone(tasks); }, [tasks]);
 
-  ]);
 
   const ListItem = ({ tasks }) => {
     return (
@@ -29,7 +29,6 @@ const App = () => {
         </View>
         {
           //check if the task is not completed
-          //<MaterialCommunityIcons name="delete-circle" size={24} color="red" />
           !tasks?.completed &&
           <TouchableOpacity onPress={() => taskCompleted(tasks?.id)}>
             <MaterialIcons name="done-outline" size={24} color="white" />
@@ -47,7 +46,7 @@ const App = () => {
   const addTask = () => {
     //if textInput is empty throw an error
     if (textInput == "") {
-      Alert.alert("Attention", "Please input your task")
+      Alert.alert("Attention", "Please input your task :)")
     } else {
       const newTask = {
         //generate a random unique ID for the newTask
@@ -84,13 +83,36 @@ const App = () => {
 
   // delete all tasks
   const deleteAllTasks = () => {
-    Alert.alert("Confirm", "Delete all tasks ?", [{
+    Alert.alert("Are you sure?", "Delete all", [{
       text: "Yes", onPress: () => setTasks([])
     },
     {
       text: "No, I was joking! :)"
     },
     ]);
+  };
+
+  // store the data in the mobile device
+  const storeTasksPhone = async (tasks) => {
+    //retrieved from https://react-native-async-storage.github.io/async-storage/docs/usage
+    try {
+      const stringifyTasks = JSON.stringify(tasks)
+      await AsyncStorage.setItem('tasks', stringifyTasks);
+    } catch (error) {
+      console.log(error);
+      // saving error
+    }
+  };
+
+  const getTasksPhone = async () => {
+    try {
+      const tasks = await AsyncStorage.getItem("tasks")
+      if (tasks != null) {
+        setTasks(JSON.parse(tasks));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
 
@@ -139,7 +161,7 @@ const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
     bottom: 50,
-    color: colours.backColour,
+    backgroundColor: colours.backColour,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
