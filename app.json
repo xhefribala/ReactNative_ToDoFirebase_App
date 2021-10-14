@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "myFirstApp",
-    "slug": "myFirstApp",
+    "name": "LISTOMATIC",
+    "slug": "LISTOMATIC",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/LaunchScreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
