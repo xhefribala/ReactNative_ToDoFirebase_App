@@ -14,6 +14,7 @@ const Main = () => {
     React.useEffect(() => { storeTasksPhone(tasks); }, [tasks]);
 
 
+
     const ListItem = ({ tasks }) => {
         return (
             //this view will hold the task list
@@ -108,6 +109,7 @@ const Main = () => {
             const tasks = await AsyncStorage.getItem("tasks")
             if (tasks != null) {
                 setTasks(JSON.parse(tasks));
+
             }
         } catch (error) {
             console.log(error);
