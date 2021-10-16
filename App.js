@@ -2,6 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MainScreen from './Main'
+import SplashScreen from './Splash'
+
 
 const Stack = createStackNavigator();
 const App = () => {
@@ -9,12 +11,18 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Main'>
+      <Stack.Navigator initialRouteName='Splash'>
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Main"
           component={MainScreen}
           options={{ headerShown: false }}
         />
+
 
       </Stack.Navigator>
     </NavigationContainer>

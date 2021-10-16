@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
+
 const Main = () => {
     //hold text input, by default it will be an empty string by default
     const [textInput, setTextInput] = React.useState('');
@@ -35,7 +36,7 @@ const Main = () => {
                     </TouchableOpacity>
                 }
                 <TouchableOpacity onPress={() => deleteTask(tasks?.id)}>
-                    <MaterialCommunityIcons name="delete-circle" size={24} color="red" />
+                    <Ionicons name="trash-bin" size={24} color="red" />
                 </TouchableOpacity>
             </View>
 
@@ -50,7 +51,7 @@ const Main = () => {
         } else {
             const newTask = {
                 //generate a random unique ID for the newTask
-                id: Math.random(),
+                id: Math.random().toString(),
                 task: textInput,
                 completed: false,
             };
@@ -77,8 +78,17 @@ const Main = () => {
 
     // delete task from list
     const deleteTask = (taskID) => {
-        const newTask = tasks.filter(item => item.id != taskID);
-        setTasks(newTask);
+        Alert.alert("Attention", "Delete Task?", [{
+            text: "Yes", onPress: () => {
+                const newTask = tasks.filter(item => item.id != taskID);
+                setTasks(newTask);
+            }
+        },
+        {
+            text: "No"
+        },
+        ]);
+
     }
 
     // delete all tasks
@@ -109,10 +119,10 @@ const Main = () => {
             const tasks = await AsyncStorage.getItem("tasks")
             if (tasks != null) {
                 setTasks(JSON.parse(tasks));
-
             }
         } catch (error) {
             console.log(error);
+
         }
     };
 
@@ -131,7 +141,9 @@ const Main = () => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
                 data={tasks}
+                keyExtractor={(item, index) => { return item.id; }}
                 renderItem={({ item }) => <ListItem tasks={item} />}>
+
 
             </FlatList>
             <View style={styles.footer}>
