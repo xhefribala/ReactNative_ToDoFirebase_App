@@ -3,11 +3,10 @@ import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Flat
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 
-const Main = () => {
+function Main() {
     //hold text input, by default it will be an empty string by default
     const [textInput, setTextInput] = React.useState('');
     const [tasks, setTasks] = React.useState([]);
@@ -33,8 +32,7 @@ const Main = () => {
                     !tasks?.completed &&
                     <TouchableOpacity onPress={() => taskCompleted(tasks?.id)}>
                         <MaterialIcons name="done-outline" size={24} color="white" />
-                    </TouchableOpacity>
-                }
+                    </TouchableOpacity>}
                 <TouchableOpacity onPress={() => deleteTask(tasks?.id)}>
                     <Ionicons name="trash-bin" size={24} color="red" />
                 </TouchableOpacity>
@@ -47,7 +45,7 @@ const Main = () => {
     const addTask = () => {
         //if textInput is empty throw an error
         if (textInput == "") {
-            Alert.alert("Attention", "Please input your task :)")
+            Alert.alert("Attention", "Please input your task :)");
         } else {
             const newTask = {
                 //generate a random unique ID for the newTask
@@ -59,7 +57,7 @@ const Main = () => {
             setTasks([...tasks, newTask]);
             setTextInput('');
         }
-    }
+    };
 
     // mark task as 'completed'
     const taskCompleted = (taskID) => {
@@ -67,7 +65,7 @@ const Main = () => {
 
             if (item.id == taskID) {
                 //if true create new object and set completed to true
-                return { ...item, completed: true }
+                return { ...item, completed: true };
             }
             //return rest of items
             return item;
@@ -89,7 +87,7 @@ const Main = () => {
         },
         ]);
 
-    }
+    };
 
     // delete all tasks
     const deleteAllTasks = () => {
@@ -106,7 +104,7 @@ const Main = () => {
     const storeTasksPhone = async (tasks) => {
         //retrieved from https://react-native-async-storage.github.io/async-storage/docs/usage
         try {
-            const stringifyTasks = JSON.stringify(tasks)
+            const stringifyTasks = JSON.stringify(tasks);
             await AsyncStorage.setItem('tasks', stringifyTasks);
         } catch (error) {
             console.log(error);
@@ -116,7 +114,7 @@ const Main = () => {
 
     const getTasksPhone = async () => {
         try {
-            const tasks = await AsyncStorage.getItem("tasks")
+            const tasks = await AsyncStorage.getItem("tasks");
             if (tasks != null) {
                 setTasks(JSON.parse(tasks));
             }
@@ -158,7 +156,7 @@ const Main = () => {
                 </TouchableOpacity>
             </View>
         </SafeAreaView>);
-};
+}
 
 const colours = {
     textColour: '#2596be', white: '#fff', backColour: '#eeeee4'
