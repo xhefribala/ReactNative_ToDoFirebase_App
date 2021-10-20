@@ -7,7 +7,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 
 function Main() {
-    //hold text input, by default it will be an empty string by default
+    //hold text input, by default it will be an empty string
     const [textInput, setTextInput] = React.useState('');
     const [tasks, setTasks] = React.useState([]);
     React.useEffect(() => { getTasksPhone(); }, []);
