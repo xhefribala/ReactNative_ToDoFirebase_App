@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, Image } from "react-native";
-import LogoImage from "./assets/splash1.png";
+import LogoImage from "../assets/splash1.png";
 
 export default class Splash extends Component {
 
