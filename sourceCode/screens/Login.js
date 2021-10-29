@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigation } from '@react-navigation/core'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { auth } from '../../firebase'
 
@@ -6,10 +7,22 @@ const LoginScreen = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+    const navigation = useNavigation()
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
+            if (user) {
+                navigation.replace("Main")
+            }
+        })
+
+        return unsubscribe
+    }, [])
+
     //handle sign up firebase registration
     const handleSignUp = () => {
-        auth.createUserWithEmailAndPassword(email, password).then(userDetails => {
-            const user = userDetails.user;
+        auth.createUserWithEmailAndPassword(email, password).then(userCredential => {
+            const user = userCredential.user;
             console.log('Sign Up with:', user.email);
         })
             .catch(error => alert(error.message))
@@ -17,8 +30,8 @@ const LoginScreen = () => {
 
     //handle login firebase registration
     const handleLogin = () => {
-        auth.signInWithEmailAndPassword(email, password).then(userDetails => {
-            const user = userDetails.user;
+        auth.signInWithEmailAndPassword(email, password).then(userCredential => {
+            const user = userCredential.user;
             console.log('Log in with:', user.email);
         })
             .catch(error => alert(error.message))

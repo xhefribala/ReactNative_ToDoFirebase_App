@@ -3,17 +3,25 @@ import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Flat
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-
+import { useNavigation } from '@react-navigation/core'
+import { auth } from 'firebase'
 
 
 function Main() {
     //hold text input, by default it will be an empty string
+
+    const navigation = useNavigation()
     const [textInput, setTextInput] = React.useState('');
     const [tasks, setTasks] = React.useState([]);
     React.useEffect(() => { getTasksPhone(); }, []);
     React.useEffect(() => { storeTasksPhone(tasks); }, [tasks]);
 
-
+    const handleSignOut = () => {
+        auth.signOut().then(() => {
+            navigation.replace("Login")
+        })
+            .catch(error => alert(error.message))
+    }
 
     const ListItem = ({ tasks }) => {
         return (
@@ -130,11 +138,19 @@ function Main() {
         <SafeAreaView
             style={{ flex: 1, backgroundColor: colours.white }}>
             <View style={styles.header}>
+                <View style={styles.container}>
+                    <Text>Email: {auth.currentUser?.email}</Text>
+                    <TouchableOpacity
+                        onPress={handleSignOut}
+                        style={styles.button}><Text style={styles.buttonText}>Sign out</Text>
+                    </TouchableOpacity>
+                </View>
                 <Text style={{ fontWeight: '700', fontSize: 25, color: colours.textColour }}>Xhefri's To Do List</Text>
                 <TouchableOpacity onPress={deleteAllTasks}>
                     <Ionicons name="trash-bin" size={30} color="#2596be" />
                 </TouchableOpacity>
             </View>
+
             <FlatList
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
@@ -196,6 +212,30 @@ const styles = StyleSheet.create({
         elevation: 12,
         borderRadius: 7,
         marginVertical: 10,
+    },
+    button: {
+        backgroundColor: '#2596be',
+        width: '40%',
+        padding: 15,
+        borderRadius: 30,
+        //align text
+        alignItems: 'center',
+    },
+    buttonOutline: {
+        backgroundColor: 'white',
+        marginTop: 4,
+        borderColor: '#2596be',
+        borderWidth: 1,
+    },
+    buttonOutlineText: {
+        color: '#2596be',
+        fontWeight: '600',
+        fontSize: 18,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 18,
     },
 });
 
