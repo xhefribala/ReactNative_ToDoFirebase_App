@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { View, Image } from "react-native";
-import LogoImage from "../assets/splash1.png";
+import LogoImage from "../../assets/splash1.png";
 
 export default class Splash extends Component {
 
     componentDidMount() {
         //method that gets called after a component is mounted
         setTimeout(() => {
-            this.props.navigation.navigate("Main");
+            this.props.navigation.navigate("Login");
         }, 4000) //4 seconds 
     }
     render() {
