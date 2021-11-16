@@ -1,17 +1,15 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import MainScreen from './screens/Main'
-import SplashScreen from './screens/Splash'
-import LoginScreen from './screens/Login'
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import MainScreen from "./screens/Main";
+import SplashScreen from "./screens/Splash";
+import LoginScreen from "./screens/Login";
 
 const Stack = createStackNavigator();
 const App = () => {
-
-
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Splash'>
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
           name="Splash"
           component={SplashScreen}
@@ -27,10 +25,14 @@ const App = () => {
           component={MainScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Edit"
+          component={EditScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
-  )
+  );
 };
-
 
 export default App;
