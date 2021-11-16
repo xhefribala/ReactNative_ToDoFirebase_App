@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
-import { auth, firestore } from "../../firebase";
+import firebase, { auth, firestore } from "../../firebase";
 
 function Main() {
   //hold text input, by default it will be an empty string
@@ -21,9 +21,19 @@ function Main() {
   const navigation = useNavigation();
   const [textInput, setTextInput] = React.useState("");
   const [tasks, setTasks] = React.useState([]);
+
   React.useEffect(() => {
-    getTasksPhone();
-  }, []);
+    // load task again when view is focused
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      console.log("View focused");
+      getTasksPhone();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
   React.useEffect(() => {
     storeTasksPhone(tasks);
   }, [tasks]);
@@ -38,9 +48,13 @@ function Main() {
   };
 
   const ListItem = ({ tasks }) => {
+    const handleTaskPressed = () => {
+      navigation.navigate("Edit", tasks);
+    };
+
     return (
       //this view will hold the task list
-      <View style={styles.listItem}>
+      <TouchableOpacity style={styles.listItem} onPress={handleTaskPressed}>
         <View style={{ flex: 1 }}>
           <Text
             style={{
@@ -64,7 +78,7 @@ function Main() {
         <TouchableOpacity onPress={() => deleteTask(tasks?.id)}>
           <Ionicons name="trash-bin" size={24} color="red" />
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -74,53 +88,83 @@ function Main() {
     if (textInput == "") {
       Alert.alert("Attention", "Please input your task :)");
     } else {
-      const newTask = {
+      let newTask = {
         //generate a random unique ID for the newTask
-        id: Math.random().toString(),
         task: textInput,
         completed: false,
       };
-      //array that hold the tasks
-      setTasks([...tasks, newTask]);
-      setTextInput("");
+
       const uid = auth.currentUser.uid;
       firestore
-        .collection("users")
-        .doc(uid)
-        .set({
-          task: [newTask],
+        .collection("tasks")
+        .add(newTask)
+        .then((response) => {
+          console.log("Task added:" + response.id);
+
+          // save to user's tasks
+          firestore
+            .collection("users")
+            .doc(uid)
+            .update({
+              tasks: firebase.firestore.FieldValue.arrayUnion(response.id),
+            })
+            .then(() => {
+              newTask = { id: response.id, ...newTask };
+              //array that hold the tasks
+              setTasks([...tasks, newTask]);
+              setTextInput("");
+            });
+        })
+        .catch((error) => {
+          console.log(error);
         });
     }
   };
 
   // mark task as 'completed'
   const taskCompleted = (taskID) => {
-    const newTaskItem = tasks.map((item) => {
-      if (item.id == taskID) {
-        //if true create new object and set completed to true
-        return { ...item, completed: true };
-      }
-      //return rest of items
-      return item;
-    });
-    //pass the new tasks completed
-    setTasks(newTaskItem);
+    firestore
+      .collection("tasks")
+      .doc(taskID)
+      .update({
+        completed: true,
+      })
+      .then(() => {
+        const newTaskItem = tasks.map((item) => {
+          if (item.id == taskID) {
+            //if true create new object and set completed to true
+            return { ...item, completed: true };
+          }
+          //return rest of items
+          return item;
+        });
+        //pass the new tasks completed
+        setTasks(newTaskItem);
+      });
   };
 
   // delete task from list
   const deleteTask = (taskID) => {
     Alert.alert("Attention", "Delete Task?", [
-      {
-        text: "Yes",
-        onPress: () => {
-          const newTask = tasks.filter((item) => item.id != taskID);
-          setTasks(newTask);
-        },
-      },
-      {
-        text: "No",
-      },
+      { text: "Yes", onPress: () => handleDeleteTask(taskID) },
+      { text: "No" },
     ]);
+  };
+
+  const handleDeleteTask = (taskID) => {
+    const uid = auth.currentUser.uid;
+
+    firestore.collection("tasks").doc(taskID).delete();
+    firestore
+      .collection("users")
+      .doc(uid)
+      .update({
+        tasks: firebase.firestore.FieldValue.arrayRemove(taskID),
+      })
+      .then(() => {
+        const newTask = tasks.filter((item) => item.id != taskID);
+        setTasks(newTask);
+      });
   };
 
   // delete all tasks
@@ -149,13 +193,25 @@ function Main() {
   };
 
   const getTasksPhone = async () => {
-    try {
-      const tasks = await AsyncStorage.getItem("tasks");
-      if (tasks != null) {
-        setTasks(JSON.parse(tasks));
-      }
-    } catch (error) {
-      console.log(error);
+    const uid = auth.currentUser.uid;
+    let userRef = await firestore.collection("users").doc(uid).get();
+    let taskIds = userRef.data().tasks || [];
+
+    if (taskIds.length > 0) {
+      let taskDocs = await firestore
+        .collection("tasks")
+        .where(firebase.firestore.FieldPath.documentId(), "in", taskIds)
+        .get();
+
+      let tasks = [];
+      taskDocs.forEach((doc) => {
+        tasks.push({ id: doc.id, ...doc.data() });
+      });
+
+      console.log("fetchtasks" + JSON.stringify(tasks, null, 4));
+
+      // get all tasks successfully
+      setTasks(tasks);
     }
   };
 
