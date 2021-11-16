@@ -1,27 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/core";
-import {
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { auth, firestore } from "../../firebase";
+import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/core';
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { auth, firestore } from '../../firebase';
 
 const EditScreen = ({ route, navigation }) => {
   const data = route.params;
   const [newTaskContent, setNewTaskContent] = useState(data.task);
 
   const updateTask = () => {
-    if (newTaskContent === "") {
-      alert("Please enter a task");
+    if (newTaskContent === '') {
+      alert('Please enter a task');
       return;
     }
 
     firestore
-      .collection("tasks")
+      .collection('tasks')
       .doc(data.id)
       .update({
         task: newTaskContent,
@@ -65,13 +58,13 @@ export default EditScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
     marginTop: 20,
-    width: "80%",
-    borderColor: "black",
+    width: '80%',
+    borderColor: 'black',
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
@@ -80,12 +73,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: "lightgray",
+    backgroundColor: 'lightgray',
   },
   buttonBack: {
     marginTop: 20,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: "red",
+    backgroundColor: 'red',
   },
 });

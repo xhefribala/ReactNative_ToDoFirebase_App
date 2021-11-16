@@ -1,32 +1,23 @@
-import React from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  FlatList,
-  Alert,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/core";
-import firebase, { auth, firestore } from "../../firebase";
+import React from 'react';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/core';
+import firebase, { auth, firestore } from '../../firebase';
 
 function Main() {
   //hold text input, by default it will be an empty string
 
   const navigation = useNavigation();
-  const [textInput, setTextInput] = React.useState("");
+  const [textInput, setTextInput] = React.useState('');
   const [tasks, setTasks] = React.useState([]);
 
   React.useEffect(() => {
     // load task again when view is focused
-    const unsubscribe = navigation.addListener("focus", () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       // The screen is focused
-      console.log("View focused");
+      console.log('View focused');
       getTasksPhone();
     });
 
@@ -42,14 +33,14 @@ function Main() {
     auth
       .signOut()
       .then(() => {
-        navigation.replace("Login");
+        navigation.replace('Login');
       })
       .catch((error) => alert(error.message));
   };
 
   const ListItem = ({ tasks }) => {
     const handleTaskPressed = () => {
-      navigation.navigate("Edit", tasks);
+      navigation.navigate('Edit', tasks);
     };
 
     return (
@@ -58,10 +49,10 @@ function Main() {
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontWeight: "700",
+              fontWeight: '700',
               fontSize: 20,
               color: colours.white,
-              textDecorationLine: tasks?.completed ? "line-through" : "none",
+              textDecorationLine: tasks?.completed ? 'line-through' : 'none',
             }}
           >
             {tasks?.task}
@@ -85,8 +76,8 @@ function Main() {
   //add task
   const addTask = () => {
     //if textInput is empty throw an error
-    if (textInput == "") {
-      Alert.alert("Attention", "Please input your task :)");
+    if (textInput == '') {
+      Alert.alert('Attention', 'Please input your task :)');
     } else {
       let newTask = {
         //generate a random unique ID for the newTask
@@ -96,14 +87,14 @@ function Main() {
 
       const uid = auth.currentUser.uid;
       firestore
-        .collection("tasks")
+        .collection('tasks')
         .add(newTask)
         .then((response) => {
-          console.log("Task added:" + response.id);
+          console.log('Task added:' + response.id);
 
           // save to user's tasks
           firestore
-            .collection("users")
+            .collection('users')
             .doc(uid)
             .update({
               tasks: firebase.firestore.FieldValue.arrayUnion(response.id),
@@ -112,7 +103,7 @@ function Main() {
               newTask = { id: response.id, ...newTask };
               //array that hold the tasks
               setTasks([...tasks, newTask]);
-              setTextInput("");
+              setTextInput('');
             });
         })
         .catch((error) => {
@@ -124,7 +115,7 @@ function Main() {
   // mark task as 'completed'
   const taskCompleted = (taskID) => {
     firestore
-      .collection("tasks")
+      .collection('tasks')
       .doc(taskID)
       .update({
         completed: true,
@@ -145,18 +136,18 @@ function Main() {
 
   // delete task from list
   const deleteTask = (taskID) => {
-    Alert.alert("Attention", "Delete Task?", [
-      { text: "Yes", onPress: () => handleDeleteTask(taskID) },
-      { text: "No" },
+    Alert.alert('Attention', 'Delete Task?', [
+      { text: 'Yes', onPress: () => handleDeleteTask(taskID) },
+      { text: 'No' },
     ]);
   };
 
   const handleDeleteTask = (taskID) => {
     const uid = auth.currentUser.uid;
 
-    firestore.collection("tasks").doc(taskID).delete();
+    firestore.collection('tasks').doc(taskID).delete();
     firestore
-      .collection("users")
+      .collection('users')
       .doc(uid)
       .update({
         tasks: firebase.firestore.FieldValue.arrayRemove(taskID),
@@ -169,13 +160,13 @@ function Main() {
 
   // delete all tasks
   const deleteAllTasks = () => {
-    Alert.alert("Are you sure?", "Delete all", [
+    Alert.alert('Are you sure?', 'Delete all', [
       {
-        text: "Yes",
+        text: 'Yes',
         onPress: () => setTasks([]),
       },
       {
-        text: "No, I was joking! :)",
+        text: 'No, I was joking! :)',
       },
     ]);
   };
@@ -185,7 +176,7 @@ function Main() {
     //retrieved from https://react-native-async-storage.github.io/async-storage/docs/usage
     try {
       const stringifyTasks = JSON.stringify(tasks);
-      await AsyncStorage.setItem("tasks", stringifyTasks);
+      await AsyncStorage.setItem('tasks', stringifyTasks);
     } catch (error) {
       console.log(error);
       // saving error
@@ -194,13 +185,13 @@ function Main() {
 
   const getTasksPhone = async () => {
     const uid = auth.currentUser.uid;
-    let userRef = await firestore.collection("users").doc(uid).get();
+    let userRef = await firestore.collection('users').doc(uid).get();
     let taskIds = userRef.data().tasks || [];
 
     if (taskIds.length > 0) {
       let taskDocs = await firestore
-        .collection("tasks")
-        .where(firebase.firestore.FieldPath.documentId(), "in", taskIds)
+        .collection('tasks')
+        .where(firebase.firestore.FieldPath.documentId(), 'in', taskIds)
         .get();
 
       let tasks = [];
@@ -208,7 +199,7 @@ function Main() {
         tasks.push({ id: doc.id, ...doc.data() });
       });
 
-      console.log("fetchtasks" + JSON.stringify(tasks, null, 4));
+      console.log('fetchtasks' + JSON.stringify(tasks, null, 4));
 
       // get all tasks successfully
       setTasks(tasks);
@@ -224,11 +215,7 @@ function Main() {
             <Text style={styles.buttonText}>Sign out</Text>
           </TouchableOpacity>
         </View>
-        <Text
-          style={{ fontWeight: "700", fontSize: 25, color: colours.textColour }}
-        >
-          To Do List
-        </Text>
+        <Text style={{ fontWeight: '700', fontSize: 25, color: colours.textColour }}>To Do List</Text>
         <TouchableOpacity onPress={deleteAllTasks}>
           <Ionicons name="trash-bin" size={30} color="#2596be" />
         </TouchableOpacity>
@@ -245,11 +232,7 @@ function Main() {
       ></FlatList>
       <View style={styles.footer}>
         <View style={styles.inputTab}>
-          <TextInput
-            placeholder="Add Task"
-            value={textInput}
-            onChangeText={(text) => setTextInput(text)}
-          ></TextInput>
+          <TextInput placeholder="Add Task" value={textInput} onChangeText={(text) => setTextInput(text)}></TextInput>
         </View>
         <TouchableOpacity onPress={addTask}>
           <Ionicons name="md-add-circle" size={50} color="#2596be" />
@@ -260,25 +243,25 @@ function Main() {
 }
 
 const colours = {
-  textColour: "#2596be",
-  white: "#fff",
-  backColour: "#eeeee4",
+  textColour: '#2596be',
+  white: '#fff',
+  backColour: '#eeeee4',
 };
 
 const styles = StyleSheet.create({
   header: {
     padding: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   footer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 50,
     backgroundColor: colours.backColour,
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 30,
     flex: 1,
   },
@@ -295,33 +278,33 @@ const styles = StyleSheet.create({
   listItem: {
     padding: 20,
     backgroundColor: colours.textColour,
-    flexDirection: "row",
+    flexDirection: 'row',
     elevation: 12,
     borderRadius: 7,
     marginVertical: 10,
   },
   button: {
-    backgroundColor: "#2596be",
-    width: "40%",
+    backgroundColor: '#2596be',
+    width: '40%',
     padding: 15,
     borderRadius: 30,
     //align text
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonOutline: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     marginTop: 4,
-    borderColor: "#2596be",
+    borderColor: '#2596be',
     borderWidth: 1,
   },
   buttonOutlineText: {
-    color: "#2596be",
-    fontWeight: "600",
+    color: '#2596be',
+    fontWeight: '600',
     fontSize: 18,
   },
   buttonText: {
-    color: "white",
-    fontWeight: "600",
+    color: 'white',
+    fontWeight: '600',
     fontSize: 18,
   },
 });
