@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/core';
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { auth, firestore } from '../../firebase';
+import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/core";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { auth, firestore } from "../../firebase";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('jeff@test.xyz');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const navigation = useNavigation();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.replace('Main');
+        navigation.replace("Main");
       }
     });
 
@@ -26,7 +33,7 @@ const LoginScreen = () => {
       .then((userCredential) => {
         const uid = userCredential.user.uid;
         const user = userCredential.user;
-        firestore.collection('users').doc(uid).set({
+        firestore.collection("users").doc(uid).set({
           email: user.email,
         });
         // console.log('Sign Up with:', user.email);
@@ -78,8 +85,13 @@ const LoginScreen = () => {
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleSignUp} style={[styles.button, styles.buttonOutline]}>
-          <Text style={styles.buttonOutlineText}>Register</Text>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("SignUp")}
+          style={[styles.button, styles.buttonOutline]}
+        >
+          <Text style={styles.buttonOutlineText}>Don't have an account?</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -90,47 +102,47 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   inputContainer: {
-    width: '80%',
+    width: "80%",
   },
   input: {
-    backgroundColor: '#eeeee4',
+    backgroundColor: "#eeeee4",
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 5,
   },
   buttonContainer: {
-    width: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 50,
+    width: "80-%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
   },
   button: {
-    backgroundColor: '#2596be',
-    width: '100%',
+    backgroundColor: "#2596be",
+    width: "100%",
     padding: 15,
     borderRadius: 30,
     //align text
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonOutline: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginTop: 4,
-    borderColor: '#2596be',
+    borderColor: "#2596be",
     borderWidth: 1,
   },
   buttonOutlineText: {
-    color: '#2596be',
-    fontWeight: '600',
+    color: "#2596be",
+    fontWeight: "600",
     fontSize: 18,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: '600',
+    color: "white",
+    fontWeight: "600",
     fontSize: 18,
   },
 });
