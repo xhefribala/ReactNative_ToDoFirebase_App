@@ -328,6 +328,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 10,
   },
+  emailText: {
+    color: "#Abadad",
+    fontWeight: "600",
+    fontSize: 13,
+  },
 });
 
 export default Main;

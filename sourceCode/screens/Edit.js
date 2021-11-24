@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#ffff",
   },
   input: {
     marginTop: 20,
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: "#eeeee4",
+    backgroundColor: "#ffff",
   },
   buttonSave: {
     marginTop: 20,
