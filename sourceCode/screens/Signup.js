@@ -58,14 +58,6 @@ const LoginScreen = () => {
         <TextInput
           placeholder="Email"
           value={email}
-          get
-          the
-          text
-          when
-          changes
-          on
-          the
-          input
           onChangeText={(text) => setEmail(text)}
           style={styles.input}
         />
@@ -74,9 +66,7 @@ const LoginScreen = () => {
           value={password}
           onChangeText={(text) => setPassword(text)}
           style={styles.input}
-          hide
-          password
-          text
+          // hide password
           secureTextEntry
         />
       </View>
