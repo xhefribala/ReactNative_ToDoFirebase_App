@@ -194,8 +194,11 @@ function Main() {
   };
 
   const getTasksPhone = async () => {
+    // get login user ID
     const uid = auth.currentUser.uid;
+    // get the user information from Firestore
     let userRef = await firestore.collection("users").doc(uid).get();
+    // get all the task ID ( || []; default use empty array)
     let taskIds = userRef.data().tasks || [];
 
     if (taskIds.length > 0) {
@@ -209,7 +212,7 @@ function Main() {
         tasks.push({ id: doc.id, ...doc.data() });
       });
 
-      console.log("fetchtasks" + JSON.stringify(tasks, null, 4));
+      // console.log("fetchtasks" + JSON.stringify(tasks, null, 4));
 
       // get all tasks successfully
       setTasks(tasks);

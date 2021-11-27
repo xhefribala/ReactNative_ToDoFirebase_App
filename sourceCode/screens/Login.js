@@ -26,21 +26,6 @@ const LoginScreen = () => {
     return unsubscribe;
   }, []);
 
-  //handle sign up firebase registration
-  const handleSignUp = () => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const uid = userCredential.user.uid;
-        const user = userCredential.user;
-        firestore.collection("users").doc(uid).set({
-          email: user.email,
-        });
-        // console.log('Sign Up with:', user.email);
-      })
-      .catch((error) => alert(error.message));
-  };
-
   //handle login firebase registration
   const handleLogin = () => {
     auth
